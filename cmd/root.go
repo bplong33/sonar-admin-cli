@@ -41,6 +41,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.AddCommand(projectCmd)
+	rootCmd.AddCommand(permissionsCmd)
 	rootCmd.AddCommand(configCmd)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.sonar-admin-cli.toml)")
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// flag variables
 var (
 	Visibility string
 	Query      string
@@ -64,13 +65,6 @@ func init() {
 		"A comma-separated list of project keys")
 	searchCmd.Flags().BoolP("provisioned", "p", false,
 		"Only show projects that have been provisioned.")
-	// Here you will define your flags and configuration settings.
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// searchCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
 	// searchCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
