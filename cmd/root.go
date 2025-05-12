@@ -4,9 +4,12 @@ Copyright © 2025 Brandon Long <bplong96@gmail.com>
 package cmd
 
 import (
+	"fmt"
 	"os"
 
+	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -24,6 +27,8 @@ to quickly create a Cobra application.`,
 	// Run: func(cmd *cobra.Command, args []string) { },
 }
 
+var cfgFile string
+
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
@@ -34,13 +39,31 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.sonar-admin-cli.yaml)")
+	// cobra.OnInitialize(initConfig)
+	rootCmd.AddCommand(projectCmd)
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.sonar-admin-cli.toml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func initConfig() {
+	if cfgFile != "" {
+		viper.SetConfigFile(cfgFile)
+	} else {
+		home, err := homedir.Dir()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		viper.AddConfigPath(home)
+		viper.SetConfigFile(".sonar-cli-admin")
+	}
+
+	if err := viper.ReadInConfig(); err != nil {
+		fmt.Println("Can't read in config:", err)
+		os.Exit(1)
+	}
 }

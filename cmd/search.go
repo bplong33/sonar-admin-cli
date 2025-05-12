@@ -11,21 +11,34 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	Visibility string
+	Query      string
+	Projects   string
+)
+
 // searchCmd represents the search command
 var searchCmd = &cobra.Command{
 	Use:   "search",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Args:  cobra.NoArgs,
+	Short: "Search Sonarqube projects based on various conditions",
+	Long: `Search Sonarqube projects based on various conditions. Running the command
+with no flags or filters will return all projects.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Retrieving Projects......\n")
 
 		c := services.NewProjectClient()
-		opts := map[string]string{"visibility": "private"}
+		opts := map[string]string{}
+		if Visibility != "" {
+			opts["visibility"] = Visibility
+		}
+		if Query != "" {
+			opts["q"] = Query
+		}
+		if Projects != "" {
+			opts["projects"] = Projects
+		}
+		// opts := map[string]string{"visibility": "private"}
 		projects := c.GetProjects(opts)
 
 		// Print Table Header
@@ -43,8 +56,14 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	projectCmd.AddCommand(searchCmd)
-
+	searchCmd.Flags().StringVarP(&Visibility, "visibility", "v", "",
+		"Filter to specific project visibility ('public' or 'private').")
+	searchCmd.Flags().StringVarP(&Query, "query", "q", "",
+		"Filter only projects whose name or key contain the supplied string")
+	searchCmd.Flags().StringVarP(&Projects, "projects", "P", "",
+		"A comma-separated list of project keys")
+	searchCmd.Flags().BoolP("provisioned", "p", false,
+		"Only show projects that have been provisioned.")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
