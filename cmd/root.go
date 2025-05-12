@@ -39,13 +39,10 @@ func Execute() {
 }
 
 func init() {
-	// cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(initConfig)
 	rootCmd.AddCommand(projectCmd)
+	rootCmd.AddCommand(configCmd)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.sonar-admin-cli.toml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 func initConfig() {
@@ -59,7 +56,8 @@ func initConfig() {
 		}
 
 		viper.AddConfigPath(home)
-		viper.SetConfigFile(".sonar-cli-admin")
+		viper.SetConfigName(".sonar-admin-cli")
+		viper.SetConfigType("toml")
 	}
 
 	if err := viper.ReadInConfig(); err != nil {
