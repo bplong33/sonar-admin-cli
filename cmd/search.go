@@ -5,10 +5,13 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+	"net/url"
 	"strings"
 
 	"github.com/bplong33/gonarqube/services"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // flag variables
@@ -28,18 +31,34 @@ with no flags or filters will return all projects.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Retrieving Projects......\n")
 
-		c := services.NewProjectClient()
-		opts := map[string]string{}
+		// TODO: Make a util function for getting configs
+		// get configs
+		active_env := viper.Get("sonar.active_env")
+		host := viper.GetString(fmt.Sprintf("sonar.%s.host", active_env))
+		token := viper.GetString(fmt.Sprintf("sonar.%s.token", active_env))
+
+		// parse url
+		hostUrl, err := url.Parse(host)
+		if err != nil {
+			log.Panicln("Invalid hostname. Please verify your config (default location: `~/.sonar-admin-cli.toml`).")
+		}
+
+		// build client
+		c := services.NewProjectClient(hostUrl, token)
+
+		// check flags and build url.Values
+		opts := url.Values{}
 		if Visibility != "" {
-			opts["visibility"] = Visibility
+			opts.Add("visibility", Visibility)
 		}
 		if Query != "" {
-			opts["q"] = Query
+			opts.Add("q", Query)
 		}
 		if Projects != "" {
-			opts["projects"] = Projects
+			opts.Add("projects", Projects)
 		}
-		// opts := map[string]string{"visibility": "private"}
+
+		// get projects
 		projects := c.GetProjects(opts)
 
 		// Print Table Header
