@@ -25,6 +25,5 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	PermissionsCmd.AddCommand(bulkApplyCmd)
-	PermissionsCmd.AddCommand(bulkRemoveCmd)
+	PermissionsCmd.AddCommand(modifyCmd)
 }

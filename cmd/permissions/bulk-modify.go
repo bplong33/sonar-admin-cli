@@ -1,0 +1,87 @@
+/*
+Copyright © 2025 Brandon Long <bplong96@gmail.com>
+*/
+package permissions
+
+import (
+	"fmt"
+	"log"
+	"net/url"
+
+	"github.com/bplong33/gonarqube/services"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+)
+
+// Usage:
+//   sonar-admin-cli permissions modify [ACTION] [FLAGS]
+//
+//     ACTIONS - Either "add" or "remove"
+// 	FLAGS - a permissions flag is required. Should be one of the following:
+// 	  - admin, codeviewer, issueadmin, securityhotspotadmin, scan, user
+
+// modifyCmd represents the modify command
+var modifyCmd = &cobra.Command{
+	Use:       "modify",
+	Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
+	ValidArgs: []string{"add", "remove"},
+	Short:     "Remove `permission` from `group`",
+	Long: `Remove a given permission from a group. If visibility and/or query filters
+are provided, this operation will only be done on projects matching these filters.
+
+ sonar-admin-cli permissions modify [ACTION] [FLAGS]
+
+Examples:
+	
+  # remove user permission from the sonar-user group on all projects
+  sonar-admin-cli permissions modify remove -g sonar-user -P user
+  
+  # remove admin permission from the custom-group group on all projects containing myProject
+  sonar-admin-cli permissions modify remove -g custom-group -P admin --query myProject
+  
+  # remove user permission from the custom-group group on all private projects
+  sonar-admin-cli permissions modify remove --group custom-group --permission admin -v private
+
+  # add admin permissions to a custom-group for a 2 specific projects
+  sonar-admin-cli permissions modify add --group custom-group --permission admin -p my-project,side-project
+`,
+	Run: func(cmd *cobra.Command, args []string) {
+		ModifyProjectPermissions(args)
+	},
+}
+
+func init() {
+	modifyCmd.Flags().StringVarP(&Group, "group", "g", "sonar-user", "Target group (default: sonar-user)")
+	modifyCmd.Flags().StringVarP(&Permission, "permission", "P", "", `Permission to be removed. Must be one of [admin, codeviewer, issueadmin, securityhotspotadmin, scan, user]`)
+	modifyCmd.Flags().StringVarP(&Visibility, "visibility", "v", "", "Visibility filter [public, private]")
+	modifyCmd.Flags().StringVarP(&Query, "query", "q", "", "Filter only projects whose name or key contain the supplied string")
+	modifyCmd.Flags().StringVarP(&ProjectFilter, "projects", "p", "", "A comma-separated list of project keys")
+	modifyCmd.MarkFlagRequired("permission")
+}
+
+func ModifyProjectPermissions(args []string) {
+	// get config
+	active_env := viper.Get("sonar.active_env")
+	host := viper.GetString(fmt.Sprintf("sonar.%s.host", active_env))
+	token := viper.GetString(fmt.Sprintf("sonar.%s.token", active_env))
+
+	// parse url
+	hostUrl, err := url.Parse(host)
+	if err != nil {
+		log.Panicf("Invalid hostname. Please verify your config (default location: `%s`).", viper.ConfigFileUsed())
+	}
+
+	// call client to remove permissions
+	c := services.NewPermissionClient(hostUrl, token)
+	failed, err := c.BulkModifyPermission(
+		args[0], Group, Permission, Visibility, Query, ProjectFilter)
+	if err != nil {
+		fmt.Println("Error while modifying permissions:", err)
+	}
+	if len(failed) > 0 {
+		fmt.Printf("Failed to modify permissions on %d projects:\n", len(failed))
+		for _, proj := range failed {
+			fmt.Println("\t", proj.Key)
+		}
+	}
+}
