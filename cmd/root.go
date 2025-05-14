@@ -10,6 +10,10 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/bplong33/sonar-admin-cli/cmd/config"
+	"github.com/bplong33/sonar-admin-cli/cmd/permissions"
+	"github.com/bplong33/sonar-admin-cli/cmd/project"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -27,7 +31,7 @@ to quickly create a Cobra application.`,
 	// Run: func(cmd *cobra.Command, args []string) { },
 }
 
-var cfgFile string
+var CfgFile string
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
@@ -40,15 +44,15 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.AddCommand(projectCmd)
-	rootCmd.AddCommand(permissionsCmd)
-	rootCmd.AddCommand(configCmd)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.sonar-admin-cli.toml)")
+	rootCmd.AddCommand(project.ProjectCmd)
+	rootCmd.AddCommand(permissions.PermissionsCmd)
+	rootCmd.AddCommand(config.ConfigCmd)
+	rootCmd.PersistentFlags().StringVar(&CfgFile, "config", "", "config file (default is $HOME/.sonar-admin-cli.toml)")
 }
 
 func initConfig() {
-	if cfgFile != "" {
-		viper.SetConfigFile(cfgFile)
+	if CfgFile != "" {
+		viper.SetConfigFile(CfgFile)
 	} else {
 		home, err := homedir.Dir()
 		if err != nil {

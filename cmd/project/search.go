@@ -1,7 +1,7 @@
 /*
 Copyright © 2025 Brandon Long <bplong96@gmail.com>
 */
-package cmd
+package project
 
 import (
 	"fmt"
@@ -12,13 +12,6 @@ import (
 	"github.com/bplong33/gonarqube/services"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-)
-
-// flag variables
-var (
-	Visibility string
-	Query      string
-	Projects   string
 )
 
 // searchCmd represents the search command
@@ -54,8 +47,8 @@ with no flags or filters will return all projects.`,
 		if Query != "" {
 			opts.Add("q", Query)
 		}
-		if Projects != "" {
-			opts.Add("projects", Projects)
+		if ProjectFilter != "" {
+			opts.Add("projects", ProjectFilter)
 		}
 
 		// get projects
@@ -76,14 +69,13 @@ with no flags or filters will return all projects.`,
 }
 
 func init() {
-	searchCmd.Flags().StringVarP(&Visibility, "visibility", "v", "",
-		"Filter to specific project visibility ('public' or 'private').")
+	searchCmd.Flags().StringVarP(
+		&Visibility, "visibility", "v", "", "Visibility filter [public, private]",
+	)
 	searchCmd.Flags().StringVarP(&Query, "query", "q", "",
 		"Filter only projects whose name or key contain the supplied string")
-	searchCmd.Flags().StringVarP(&Projects, "projects", "P", "",
+	searchCmd.Flags().StringVarP(&ProjectFilter, "projects", "p", "",
 		"A comma-separated list of project keys")
-	searchCmd.Flags().BoolP("provisioned", "p", false,
+	searchCmd.Flags().BoolP("provisioned", "P", false,
 		"Only show projects that have been provisioned.")
-
-	// searchCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
