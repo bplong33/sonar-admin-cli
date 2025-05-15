@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/bplong33/sonar-admin-cli/cmd/config"
+	"github.com/bplong33/sonar-admin-cli/cmd/groups"
 	"github.com/bplong33/sonar-admin-cli/cmd/permissions"
 	"github.com/bplong33/sonar-admin-cli/cmd/project"
 )
@@ -19,13 +20,7 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "sonar-admin-cli",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "SonarQube CLI Admin Tool",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -47,6 +42,7 @@ func init() {
 	rootCmd.AddCommand(project.ProjectCmd)
 	rootCmd.AddCommand(permissions.PermissionsCmd)
 	rootCmd.AddCommand(config.ConfigCmd)
+	rootCmd.AddCommand(groups.GroupsCmd)
 	rootCmd.PersistentFlags().StringVar(&CfgFile, "config", "", "config file (default is $HOME/.sonar-admin-cli.toml)")
 }
 
