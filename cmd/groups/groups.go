@@ -10,7 +10,7 @@ import (
 // groupsCmd represents the groups command
 var GroupsCmd = &cobra.Command{
 	Use:   "groups",
-	Short: "Create a new SonarQube group",
+	Short: "Manage and View group information",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},
@@ -18,4 +18,6 @@ var GroupsCmd = &cobra.Command{
 
 func init() {
 	GroupsCmd.AddCommand(createCmd)
+	GroupsCmd.AddCommand(detailsCmd)
+	GroupsCmd.AddCommand(addMembershipCmd)
 }
