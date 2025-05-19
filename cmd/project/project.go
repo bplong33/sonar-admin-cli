@@ -20,5 +20,5 @@ on Sonarqube projects.`,
 }
 
 func init() {
-	ProjectCmd.AddCommand(searchCmd)
+	ProjectCmd.AddCommand(projectSearch)
 }

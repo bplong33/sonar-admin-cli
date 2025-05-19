@@ -15,11 +15,12 @@ import (
 	"github.com/bplong33/sonar-admin-cli/cmd/groups"
 	"github.com/bplong33/sonar-admin-cli/cmd/permissions"
 	"github.com/bplong33/sonar-admin-cli/cmd/project"
+	"github.com/bplong33/sonar-admin-cli/cmd/users"
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "sonar-admin-cli",
+	Use:   "sonaradmin",
 	Short: "SonarQube CLI Admin Tool",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
@@ -42,7 +43,8 @@ func init() {
 	rootCmd.AddCommand(project.ProjectCmd)
 	rootCmd.AddCommand(permissions.PermissionsCmd)
 	rootCmd.AddCommand(config.ConfigCmd)
-	rootCmd.AddCommand(groups.GroupsCmd)
+	rootCmd.AddCommand(groups.GroupCmd)
+	rootCmd.AddCommand(users.UserCmd)
 	rootCmd.PersistentFlags().StringVar(&CfgFile, "config", "", "config file (default is $HOME/.sonar-admin-cli.toml)")
 }
 

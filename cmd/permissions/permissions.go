@@ -19,5 +19,5 @@ var PermissionsCmd = &cobra.Command{
 }
 
 func init() {
-	PermissionsCmd.AddCommand(modifyCmd)
+	PermissionsCmd.AddCommand(permissionModify)
 }

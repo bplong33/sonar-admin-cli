@@ -5,17 +5,15 @@ package groups
 
 import (
 	"fmt"
-	"log"
-	"net/url"
 	"os"
 
 	"github.com/bplong33/gonarqube/services"
+	"github.com/bplong33/sonar-admin-cli/common"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
-// createCmd represents the create command
-var createCmd = &cobra.Command{
+// groupCreate represents the create command
+var groupCreate = &cobra.Command{
 	Use:   "create",
 	Args:  cobra.ExactArgs(1),
 	Short: "Create a new SonarQube group",
@@ -25,21 +23,13 @@ var createCmd = &cobra.Command{
 }
 
 func init() {
-	createCmd.Flags().StringVarP(&GroupDesc, "description", "d", "", "Description of group")
+	groupCreate.Flags().StringVarP(&GroupDesc, "description", "d", "", "Description of group")
 }
 
 func AddGroup(args []string) {
 	// get config
-	active_env := viper.Get("sonar.active_env")
-	host := viper.GetString(fmt.Sprintf("sonar.%s.host", active_env))
-	token := viper.GetString(fmt.Sprintf("sonar.%s.token", active_env))
-
-	// parse url
-	hostUrl, err := url.Parse(host)
-	if err != nil {
-		log.Panicf("Invalid hostname. Please verify your config (default location: `%s`).", viper.ConfigFileUsed())
-	}
-	c := services.NewGroupClient(hostUrl, token)
+	config := common.GetConfig()
+	c := services.NewGroupClient(config.URL, config.Token)
 	statusCode, err := c.CreateGroup(args[0], GroupDesc)
 	if err != nil {
 		fmt.Println("Error:", err)

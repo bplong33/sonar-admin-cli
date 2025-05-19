@@ -8,8 +8,8 @@ import (
 )
 
 // groupsCmd represents the groups command
-var GroupsCmd = &cobra.Command{
-	Use:   "groups",
+var GroupCmd = &cobra.Command{
+	Use:   "group",
 	Short: "Manage and View group information",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
@@ -17,7 +17,7 @@ var GroupsCmd = &cobra.Command{
 }
 
 func init() {
-	GroupsCmd.AddCommand(createCmd)
-	GroupsCmd.AddCommand(detailsCmd)
-	GroupsCmd.AddCommand(addMembershipCmd)
+	GroupCmd.AddCommand(groupCreate)
+	GroupCmd.AddCommand(groupSearch)
+	GroupCmd.AddCommand(groupAddMembership)
 }
