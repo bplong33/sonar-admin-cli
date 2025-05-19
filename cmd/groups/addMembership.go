@@ -1,6 +1,3 @@
-/*
-Copyright © 2025 Brandon Long <bplong96@gmail.com>
-*/
 package groups
 
 import (
@@ -80,8 +77,8 @@ func addUser(args []string) {
 		groupId = groups[0].Id
 	}
 
-	fmt.Println(userId)
-	fmt.Println(groupId)
+	// fmt.Println(userId)
+	// fmt.Println(groupId)
 
 	status, err := groupClient.AddUserToGroup(userId, groupId)
 	if err != nil {

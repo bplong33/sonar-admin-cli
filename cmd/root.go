@@ -1,6 +1,3 @@
-/*
-Copyright © 2025 Brandon Long <bplong96@gmail.com>
-*/
 package cmd
 
 import (
@@ -20,8 +17,9 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "sonaradmin",
-	Short: "SonarQube CLI Admin Tool",
+	Use:     "sonar-admin-cli",
+	Aliases: []string{"sonaradmin"},
+	Short:   "SonarQube CLI Admin Tool",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },

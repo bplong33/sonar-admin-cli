@@ -1,6 +1,3 @@
-/*
-Copyright © 2025 Brandon Long <bplong96@gmail.com>
-*/
 package groups
 
 import (
